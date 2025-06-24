@@ -1,0 +1,1057 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>CSS Code Extractor</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+        }
+        
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 2.5rem;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .section {
+            margin-bottom: 25px;
+            padding: 20px;
+            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .section h2 {
+            color: #444;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .section h2::before {
+            content: '🎯';
+            margin-right: 10px;
+        }
+        
+        .a-codes-container {
+            margin-bottom: 20px;
+        }
+        
+        .a-code-item {
+            margin-bottom: 15px;
+            padding: 15px;
+            background: rgba(240, 248, 255, 0.8);
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .a-code-item textarea {
+            width: 100%;
+            min-height: 120px;
+            padding: 12px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            background: white;
+            resize: vertical;
+            transition: border-color 0.3s ease;
+        }
+        
+        .a-code-item textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .add-remove-btns {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+        
+        .btn-add {
+            background: linear-gradient(45deg, #4CAF50, #45a049);
+            color: white;
+        }
+        
+        .btn-add:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
+        }
+        
+        .btn-remove {
+            background: linear-gradient(45deg, #f44336, #da190b);
+            color: white;
+        }
+        
+        .btn-remove:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(244, 67, 54, 0.3);
+        }
+        
+        .file-upload-container {
+            position: relative;
+            width: 100%;
+        }
+        
+        .file-input {
+            display: none;
+        }
+        
+        .file-upload-area {
+            display: block;
+            padding: 30px 20px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            text-align: center;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            border: 3px dashed rgba(255, 255, 255, 0.3);
+            min-height: 120px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .file-upload-area:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+            border-color: rgba(255, 255, 255, 0.6);
+        }
+        
+        .file-upload-area.dragover {
+            background: linear-gradient(45deg, #764ba2, #667eea);
+            border-color: rgba(255, 255, 255, 0.8);
+            transform: scale(1.02);
+        }
+        
+        .upload-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+        
+        .upload-text {
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+        }
+        
+        .upload-subtext {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        
+        .filename-input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+        
+        .filename-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .process-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(45deg, #FF6B6B, #4ECDC4);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .process-btn:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(255, 107, 107, 0.4);
+        }
+        
+        .process-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .results {
+            margin-top: 30px;
+            padding: 20px;
+            background: rgba(248, 249, 250, 0.9);
+            border-radius: 15px;
+            border: 2px solid rgba(102, 126, 234, 0.2);
+        }
+        
+        .results h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+        }
+        
+        .not-found {
+            background: rgba(255, 193, 193, 0.8);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 10px 0;
+            border-left: 4px solid #f44336;
+        }
+        
+        .found {
+            background: rgba(193, 255, 193, 0.8);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 10px 0;
+            border-left: 4px solid #4CAF50;
+        }
+        
+        .download-btn {
+            display: inline-block;
+            padding: 12px 25px;
+            background: linear-gradient(45deg, #28a745, #20c997);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin-top: 15px;
+        }
+        
+        .download-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(40, 167, 69, 0.3);
+            text-decoration: none;
+            color: white;
+        }
+        
+        pre {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            margin: 10px 0;
+            border: 1px solid #e9ecef;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        
+        .status {
+            text-align: center;
+            margin: 20px 0;
+            font-weight: 600;
+        }
+        
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .error-message {
+            background: rgba(255, 193, 193, 0.9);
+            color: #721c24;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 10px 0;
+            border-left: 4px solid #f44336;
+            font-weight: 600;
+        }
+        
+        .success-message {
+            background: rgba(193, 255, 193, 0.9);
+            color: #155724;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 10px 0;
+            border-left: 4px solid #4CAF50;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎨 CSS Code Extractor</h1>
+        
+        <div class="section">
+            <h2>A CODES (Reference CSS Codes)</h2>
+            <div id="aCodesContainer" class="a-codes-container">
+                <div class="a-code-item">
+                    <textarea placeholder="Enter your CSS code here...&#10;&#10;Example:&#10;p.text-sm.text-gray-700.leading-relaxed,&#10;ul.mt-1.space-y-1.text-xs.text-gray-700 li,&#10;.text-xs.text-gray-700 {&#10;    text-align: justify;&#10;    hyphens: auto;&#10;}"></textarea>
+                    <div class="add-remove-btns">
+                        <button class="btn btn-remove" onclick="removeACode(this)">Remove This Code</button>
+                    </div>
+                </div>
+            </div>
+            <button class="btn btn-add" onclick="addACode()">+ Add Another A CODE</button>
+        </div>
+        
+        <div class="section">
+            <h2>B CODE (Upload CSS File)</h2>
+            <div class="file-upload-container">
+                <input type="file" id="bCodeFile" class="file-input" accept=".css,text/css">
+                <div class="file-upload-area" id="fileUploadArea">
+                    <div class="upload-icon">📁</div>
+                    <div class="upload-text">Click to Upload CSS File (B CODE)</div>
+                    <div class="upload-subtext">Drag & drop files here or click to browse</div>
+                </div>
+            </div>
+            <div id="fileStatus" class="status"></div>
+        </div>
+        
+        <div class="section">
+            <h2>Output File Names</h2>
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 5px; font-weight: 600;">📥 Extracted/Found CSS Rules:</label>
+                <input type="text" class="filename-input" id="outputFilename" placeholder="Enter filename for extracted CSS (e.g., extracted-styles.css)" value="extracted-styles.css">
+            </div>
+            <div>
+                <label style="display: block; margin-bottom: 5px; font-weight: 600;">📄 Remaining B CODE (after removing found rules):</label>
+                <input type="text" class="filename-input" id="remainingFilename" placeholder="Enter filename for remaining CSS (e.g., remaining-styles.css)" value="remaining-styles.css">
+            </div>
+        </div>
+        
+        <button class="process-btn" id="processBtn" onclick="processCSS()">
+            🚀 Extract & Compare CSS Codes
+        </button>
+        
+        <div id="results" class="results" style="display: none;"></div>
+    </div>
+
+    <script>
+        let bCodeContent = '';
+        let uploadedFileName = '';
+        
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeFileUpload();
+        });
+        
+        function initializeFileUpload() {
+            const fileInput = document.getElementById('bCodeFile');
+            const uploadArea = document.getElementById('fileUploadArea');
+            
+            // Click to upload
+            uploadArea.addEventListener('click', function() {
+                fileInput.click();
+            });
+            
+            // File input change
+            fileInput.addEventListener('change', function(e) {
+                handleFileSelect(e.target.files);
+            });
+            
+            // Drag and drop events
+            uploadArea.addEventListener('dragenter', handleDragEnter);
+            uploadArea.addEventListener('dragover', handleDragOver);
+            uploadArea.addEventListener('dragleave', handleDragLeave);
+            uploadArea.addEventListener('drop', handleDrop);
+            
+            // Prevent default drag behaviors on document
+            document.addEventListener('dragenter', preventDefault);
+            document.addEventListener('dragover', preventDefault);
+            document.addEventListener('dragleave', preventDefault);
+            document.addEventListener('drop', preventDefault);
+        }
+        
+        function preventDefault(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+        
+        function handleDragEnter(e) {
+            preventDefault(e);
+            e.currentTarget.classList.add('dragover');
+        }
+        
+        function handleDragOver(e) {
+            preventDefault(e);
+            e.currentTarget.classList.add('dragover');
+        }
+        
+        function handleDragLeave(e) {
+            preventDefault(e);
+            // Only remove dragover if we're actually leaving the drop area
+            if (!e.currentTarget.contains(e.relatedTarget)) {
+                e.currentTarget.classList.remove('dragover');
+            }
+        }
+        
+        function handleDrop(e) {
+            preventDefault(e);
+            e.currentTarget.classList.remove('dragover');
+            
+            const files = e.dataTransfer.files;
+            handleFileSelect(files);
+        }
+        
+        function handleFileSelect(files) {
+            if (!files || files.length === 0) {
+                return;
+            }
+            
+            const file = files[0];
+            handleFileUpload(file);
+        }
+        
+        function handleFileUpload(file) {
+            const statusDiv = document.getElementById('fileStatus');
+            
+            if (!file) {
+                statusDiv.innerHTML = '';
+                bCodeContent = '';
+                uploadedFileName = '';
+                updateUploadAreaText('Click to Upload CSS File (B CODE)', 'Drag & drop files here or click to browse');
+                return;
+            }
+            
+            // Validate file type
+            const fileName = file.name.toLowerCase();
+            const validExtensions = ['.css'];
+            const isValidFile = validExtensions.some(ext => fileName.endsWith(ext));
+            
+            if (!isValidFile) {
+                statusDiv.innerHTML = '<div class="error-message">❌ Please upload a CSS file (.css)</div>';
+                bCodeContent = '';
+                uploadedFileName = '';
+                clearFileInput();
+                return;
+            }
+            
+            // Check file size (max 10MB)
+            const maxSize = 10 * 1024 * 1024; // 10MB
+            if (file.size > maxSize) {
+                statusDiv.innerHTML = '<div class="error-message">❌ File too large. Maximum size is 10MB.</div>';
+                bCodeContent = '';
+                uploadedFileName = '';
+                clearFileInput();
+                return;
+            }
+            
+            statusDiv.innerHTML = '<div class="loading"></div>Reading file...';
+            updateUploadAreaText('Reading file...', 'Please wait...');
+            
+            const reader = new FileReader();
+            
+            reader.onload = function(e) {
+                try {
+                    const content = e.target.result;
+                    
+                    // Validate CSS content
+                    if (!content || !content.trim()) {
+                        throw new Error('File is empty or contains no readable content');
+                    }
+                    
+                    bCodeContent = content;
+                    uploadedFileName = file.name;
+                    
+                    statusDiv.innerHTML = `<div class="success-message">✅ File uploaded successfully: ${file.name} (${(file.size / 1024).toFixed(2)} KB)</div>`;
+                    updateUploadAreaText(`✅ ${file.name}`, `File loaded successfully (${(file.size / 1024).toFixed(2)} KB)`);
+                    
+                } catch (error) {
+                    console.error('File processing error:', error);
+                    statusDiv.innerHTML = `<div class="error-message">❌ Error processing file: ${error.message}</div>`;
+                    bCodeContent = '';
+                    uploadedFileName = '';
+                    clearFileInput();
+                    updateUploadAreaText('❌ Error reading file', 'Click to try again');
+                }
+            };
+            
+            reader.onerror = function(error) {
+                console.error('FileReader error:', error);
+                statusDiv.innerHTML = '<div class="error-message">❌ Error reading file. Please try again.</div>';
+                bCodeContent = '';
+                uploadedFileName = '';
+                clearFileInput();
+                updateUploadAreaText('❌ Error reading file', 'Click to try again');
+            };
+            
+            reader.onabort = function() {
+                statusDiv.innerHTML = '<div class="error-message">❌ File reading was aborted.</div>';
+                bCodeContent = '';
+                uploadedFileName = '';
+                clearFileInput();
+                updateUploadAreaText('❌ Upload aborted', 'Click to try again');
+            };
+            
+            // Read file as text
+            reader.readAsText(file, 'UTF-8');
+        }
+        
+        function updateUploadAreaText(mainText, subText) {
+            const uploadArea = document.getElementById('fileUploadArea');
+            uploadArea.innerHTML = `
+                <div class="upload-icon">📁</div>
+                <div class="upload-text">${mainText}</div>
+                <div class="upload-subtext">${subText}</div>
+            `;
+        }
+        
+        function clearFileInput() {
+            const fileInput = document.getElementById('bCodeFile');
+            fileInput.value = '';
+        }
+        
+        function addACode() {
+            const container = document.getElementById('aCodesContainer');
+            const newItem = document.createElement('div');
+            newItem.className = 'a-code-item';
+            newItem.innerHTML = `
+                <textarea placeholder="Enter your CSS code here..."></textarea>
+                <div class="add-remove-btns">
+                    <button class="btn btn-remove" onclick="removeACode(this)">Remove This Code</button>
+                </div>
+            `;
+            container.appendChild(newItem);
+        }
+        
+        function removeACode(button) {
+            const aCodeItems = document.querySelectorAll('.a-code-item');
+            if (aCodeItems.length > 1) {
+                button.closest('.a-code-item').remove();
+            } else {
+                alert('At least one A CODE is required!');
+            }
+        }
+        
+        function normalizeCSS(css) {
+            if (!css) return '';
+            
+            return css
+                .replace(/\/\*[\s\S]*?\*\//g, '') // Remove comments for comparison
+                .replace(/\s+/g, ' ') // Normalize whitespace
+                .replace(/;\s*}/g, '}') // Remove trailing semicolons
+                .replace(/\s*{\s*/g, '{')
+                .replace(/\s*}\s*/g, '}')
+                .replace(/\s*;\s*/g, ';')
+                .replace(/\s*,\s*/g, ',')
+                .replace(/\s*:\s*/g, ':')
+                .trim();
+        }
+        
+        // Improved CSS parsing that preserves original formatting
+        function parseCSS(css) {
+            if (!css || !css.trim()) return [];
+            
+            const rules = [];
+            const lines = css.split('\n');
+            let currentRule = '';
+            let braceCount = 0;
+            let inComment = false;
+            let startLineIndex = 0;
+            let endLineIndex = 0;
+            
+            for (let lineIndex = 0; lineIndex < lines.length; lineIndex++) {
+                const line = lines[lineIndex];
+                let processedLine = '';
+                
+                // Handle comments
+                for (let i = 0; i < line.length; i++) {
+                    const char = line[i];
+                    const nextChar = line[i + 1];
+                    
+                    if (!inComment && char === '/' && nextChar === '*') {
+                        inComment = true;
+                        processedLine += char;
+                        continue;
+                    }
+                    
+                    if (inComment && char === '*' && nextChar === '/') {
+                        inComment = false;
+                        processedLine += char + nextChar;
+                        i++; // Skip next character
+                        continue;
+                    }
+                    
+                    processedLine += char;
+                }
+                
+                if (inComment) {
+                    currentRule += (currentRule ? '\n' : '') + processedLine;
+                    continue;
+                }
+                
+                // Start of a new rule
+                if (braceCount === 0 && processedLine.trim() && !currentRule.trim()) {
+                    startLineIndex = lineIndex;
+                    currentRule = processedLine;
+                } else if (currentRule.trim()) {
+                    currentRule += '\n' + processedLine;
+                }
+                
+                // Count braces
+                for (const char of processedLine) {
+                    if (char === '{') {
+                        braceCount++;
+                    } else if (char === '}') {
+                        braceCount--;
+                        if (braceCount === 0 && currentRule.trim()) {
+                            endLineIndex = lineIndex;
+                            
+                            const normalizedRule = normalizeCSS(currentRule);
+                            if (normalizedRule) {
+                                rules.push({
+                                    original: currentRule,
+                                    normalized: normalizedRule,
+                                    startLine: startLineIndex,
+                                    endLine: endLineIndex,
+                                    lineCount: endLineIndex - startLineIndex + 1,
+                                    isSingleLine: startLineIndex === endLineIndex
+                                });
+                            }
+                            
+                            currentRule = '';
+                        }
+                    }
+                }
+            }
+            
+            // Handle any remaining rule
+            if (currentRule.trim()) {
+                const normalizedRule = normalizeCSS(currentRule);
+                if (normalizedRule) {
+                    rules.push({
+                        original: currentRule,
+                        normalized: normalizedRule,
+                        startLine: startLineIndex,
+                        endLine: lines.length - 1,
+                        lineCount: lines.length - startLineIndex,
+                        isSingleLine: startLineIndex === lines.length - 1
+                    });
+                }
+            }
+            
+            return rules;
+        }
+        
+        // FIXED: Build extracted CSS with smart spacing
+        function buildExtractedCSS(originalCSS, matchedRules) {
+            const lines = originalCSS.split('\n');
+            const extractedLines = [];
+            
+            // Sort matched rules by line number to maintain order
+            const sortedMatches = matchedRules.sort((a, b) => a.startLine - b.startLine);
+            
+            // Extract lines for each matched rule with smart spacing
+            for (let i = 0; i < sortedMatches.length; i++) {
+                const rule = sortedMatches[i];
+                const nextRule = sortedMatches[i + 1];
+                
+                // Add the rule lines
+                for (let lineIdx = rule.startLine; lineIdx <= rule.endLine; lineIdx++) {
+                    if (lineIdx < lines.length) {
+                        extractedLines.push(lines[lineIdx]);
+                    }
+                }
+                
+                // Smart spacing logic: only add blank line if needed
+                if (nextRule) {
+                    // Check if current rule and next rule are consecutive single-line rules
+                    const isCurrentSingleLine = rule.isSingleLine;
+                    const isNextSingleLine = nextRule.isSingleLine;
+                    const areConsecutiveLines = (rule.endLine + 1) === nextRule.startLine;
+                    
+                    // If both are single-line rules and they were consecutive in original,
+                    // don't add blank line
+                    if (isCurrentSingleLine && isNextSingleLine && areConsecutiveLines) {
+                        // Don't add blank line - keep them together
+                        continue;
+                    }
+                    
+                    // For multi-line rules or non-consecutive rules, add blank line
+                    extractedLines.push('');
+                }
+            }
+            
+            // Clean up excessive blank lines while preserving intentional spacing
+            const cleanedLines = [];
+            let consecutiveEmptyLines = 0;
+            
+            for (let i = 0; i < extractedLines.length; i++) {
+                const line = extractedLines[i];
+                const isEmptyLine = !line.trim();
+                
+                if (isEmptyLine) {
+                    consecutiveEmptyLines++;
+                    // Allow maximum 1 consecutive empty line
+                    if (consecutiveEmptyLines <= 1) {
+                        cleanedLines.push(line);
+                    }
+                } else {
+                    consecutiveEmptyLines = 0;
+                    cleanedLines.push(line);
+                }
+            }
+            
+            // Remove leading and trailing empty lines
+            while (cleanedLines.length > 0 && !cleanedLines[0].trim()) {
+                cleanedLines.shift();
+            }
+            while (cleanedLines.length > 0 && !cleanedLines[cleanedLines.length - 1].trim()) {
+                cleanedLines.pop();
+            }
+            
+            return cleanedLines.join('\n');
+        }
+        
+        // FIXED: Build remaining CSS with smart spacing
+        function buildRemainingCSS(originalCSS, matchedRules) {
+            const lines = originalCSS.split('\n');
+            const linesToRemove = new Set();
+            
+            // Mark all lines of matched rules for removal
+            matchedRules.forEach(rule => {
+                for (let i = rule.startLine; i <= rule.endLine; i++) {
+                    linesToRemove.add(i);
+                }
+            });
+            
+            // Build remaining CSS by keeping non-matched lines
+            const remainingLines = [];
+            let lastKeptLineIndex = -1;
+            
+            for (let i = 0; i < lines.length; i++) {
+                if (!linesToRemove.has(i)) {
+                    const line = lines[i];
+                    
+                    // Check if we need to preserve spacing
+                    if (lastKeptLineIndex >= 0) {
+                        const gapSize = i - lastKeptLineIndex - 1;
+                        // If there was originally a blank line between kept lines, preserve one blank line
+                        if (gapSize > 0) {
+                            // Check if the original gap contained any non-empty lines that were removed
+                            let hadNonEmptyRemovedLines = false;
+                            for (let gapIdx = lastKeptLineIndex + 1; gapIdx < i; gapIdx++) {
+                                if (linesToRemove.has(gapIdx) && lines[gapIdx].trim()) {
+                                    hadNonEmptyRemovedLines = true;
+                                    break;
+                                }
+                            }
+                            
+                            // Only add blank line if there were actual CSS rules removed, not just blank lines
+                            if (hadNonEmptyRemovedLines) {
+                                remainingLines.push('');
+                            }
+                        }
+                    }
+                    
+                    remainingLines.push(line);
+                    lastKeptLineIndex = i;
+                }
+            }
+            
+            // Clean up excessive blank lines while preserving intentional spacing
+            const cleanedLines = [];
+            let consecutiveEmptyLines = 0;
+            
+            for (let i = 0; i < remainingLines.length; i++) {
+                const line = remainingLines[i];
+                const isEmptyLine = !line.trim();
+                
+                if (isEmptyLine) {
+                    consecutiveEmptyLines++;
+                    // Allow maximum 1 consecutive empty line
+                    if (consecutiveEmptyLines <= 1) {
+                        cleanedLines.push(line);
+                    }
+                } else {
+                    consecutiveEmptyLines = 0;
+                    cleanedLines.push(line);
+                }
+            }
+            
+            // Remove leading and trailing empty lines
+            while (cleanedLines.length > 0 && !cleanedLines[0].trim()) {
+                cleanedLines.shift();
+            }
+            while (cleanedLines.length > 0 && !cleanedLines[cleanedLines.length - 1].trim()) {
+                cleanedLines.pop();
+            }
+            
+                        return cleanedLines.join('\n');
+        }
+        
+        function findMatchingRules(aCodeNormalized, bCodeRules) {
+            const matches = [];
+            
+            for (let i = 0; i < bCodeRules.length; i++) {
+                const rule = bCodeRules[i];
+                if (rule.normalized === aCodeNormalized) {
+                    matches.push({
+                        rule: rule,
+                        index: i
+                    });
+                }
+            }
+            
+            return matches;
+        }
+        
+        function splitACodeIntoIndividualRules(aCode) {
+            return parseCSS(aCode);
+        }
+        
+        function processCSS() {
+            const processBtn = document.getElementById('processBtn');
+            const resultsDiv = document.getElementById('results');
+            
+            // Validate inputs
+            const aCodeTextareas = document.querySelectorAll('.a-code-item textarea');
+            let hasValidACode = false;
+            
+            for (const textarea of aCodeTextareas) {
+                if (textarea.value.trim()) {
+                    hasValidACode = true;
+                    break;
+                }
+            }
+            
+            if (!hasValidACode) {
+                alert('Please enter at least one A CODE!');
+                return;
+            }
+            
+            if (!bCodeContent.trim()) {
+                alert('Please upload a B CODE file!');
+                return;
+            }
+            
+            // Disable button and show loading
+            processBtn.disabled = true;
+            processBtn.innerHTML = '<div class="loading"></div>Processing...';
+            resultsDiv.style.display = 'block';
+            resultsDiv.innerHTML = '<div class="loading"></div>Processing CSS codes...';
+            
+            // Use setTimeout to allow UI to update
+            setTimeout(() => {
+                try {
+                    const results = performCSSExtraction();
+                    displayResults(results);
+                } catch (error) {
+                    console.error('Processing error:', error);
+                    resultsDiv.innerHTML = `<div class="error-message">❌ Error processing CSS: ${error.message}</div>`;
+                } finally {
+                    processBtn.disabled = false;
+                    processBtn.innerHTML = '🚀 Extract & Compare CSS Codes';
+                }
+            }, 100);
+        }
+        
+        function performCSSExtraction() {
+            const aCodeTextareas = document.querySelectorAll('.a-code-item textarea');
+            const bCodeRules = parseCSS(bCodeContent);
+            
+            const results = {
+                foundRules: [],
+                notFoundRules: [],
+                remainingBCode: bCodeContent,
+                extractedCSS: '',
+                totalACodeRules: 0,
+                totalBCodeRules: bCodeRules.length,
+                matchedRulesCount: 0
+            };
+            
+            const matchedRules = [];
+            const matchedIndices = new Set();
+            
+            // Process each A CODE
+            for (let aIndex = 0; aIndex < aCodeTextareas.length; aIndex++) {
+                const aCodeContent = aCodeTextareas[aIndex].value.trim();
+                if (!aCodeContent) continue;
+                
+                const aCodeRules = splitACodeIntoIndividualRules(aCodeContent);
+                results.totalACodeRules += aCodeRules.length;
+                
+                for (const aRule of aCodeRules) {
+                    const matches = findMatchingRules(aRule.normalized, bCodeRules);
+                    
+                    if (matches.length > 0) {
+                        results.foundRules.push({
+                            aCode: aRule.original,
+                            aCodeIndex: aIndex + 1,
+                            matches: matches.map(match => ({
+                                bCode: match.rule.original,
+                                index: match.index
+                            }))
+                        });
+                        
+                        // Mark matched rules
+                        matches.forEach(match => {
+                            if (!matchedIndices.has(match.index)) {
+                                matchedIndices.add(match.index);
+                                matchedRules.push(match.rule);
+                            }
+                        });
+                        
+                        results.matchedRulesCount++;
+                    } else {
+                        results.notFoundRules.push({
+                            aCode: aRule.original,
+                            aCodeIndex: aIndex + 1
+                        });
+                    }
+                }
+            }
+            
+            // Build extracted CSS with smart spacing
+            results.extractedCSS = buildExtractedCSS(bCodeContent, matchedRules);
+            
+            // Build remaining CSS with smart spacing
+            results.remainingBCode = buildRemainingCSS(bCodeContent, matchedRules);
+            
+            return results;
+        }
+        
+        function displayResults(results) {
+            const resultsDiv = document.getElementById('results');
+            const outputFilename = document.getElementById('outputFilename').value || 'extracted-styles.css';
+            const remainingFilename = document.getElementById('remainingFilename').value || 'remaining-styles.css';
+            
+            let html = `
+                <h3>📊 Processing Results</h3>
+                <div class="success-message">
+                    <strong>Summary:</strong><br>
+                    • Total A CODE rules: ${results.totalACodeRules}<br>
+                    • Total B CODE rules: ${results.totalBCodeRules}<br>
+                    • Matched rules: ${results.matchedRulesCount}<br>
+                    • Not found: ${results.notFoundRules.length}<br>
+                    • Remaining B CODE rules: ${results.totalBCodeRules - results.matchedRulesCount}
+                </div>
+            `;
+            
+            // Found rules section
+            if (results.foundRules.length > 0) {
+                html += `<h3>✅ Found Rules (${results.foundRules.length})</h3>`;
+                
+                results.foundRules.forEach((item, index) => {
+                    html += `
+                        <div class="found">
+                            <strong>A CODE ${item.aCodeIndex} - Match ${index + 1}:</strong>
+                            <pre>${escapeHtml(item.aCode)}</pre>
+                            <strong>Found in B CODE:</strong>
+                            <pre>${escapeHtml(item.matches[0].bCode)}</pre>
+                        </div>
+                    `;
+                });
+                
+                // Download button for extracted CSS
+                if (results.extractedCSS.trim()) {
+                    const extractedBlob = new Blob([results.extractedCSS], { type: 'text/css' });
+                    const extractedUrl = URL.createObjectURL(extractedBlob);
+                    html += `<a href="${extractedUrl}" download="${outputFilename}" class="download-btn">📥 Download Extracted CSS Rules</a>`;
+                }
+            }
+            
+            // Not found rules section
+            if (results.notFoundRules.length > 0) {
+                html += `<h3>❌ Not Found Rules (${results.notFoundRules.length})</h3>`;
+                
+                results.notFoundRules.forEach((item, index) => {
+                    html += `
+                        <div class="not-found">
+                            <strong>A CODE ${item.aCodeIndex} - Not Found ${index + 1}:</strong>
+                            <pre>${escapeHtml(item.aCode)}</pre>
+                        </div>
+                    `;
+                });
+            }
+            
+            // Remaining B CODE section
+            if (results.remainingBCode.trim()) {
+                html += `
+                    <h3>📄 Remaining B CODE</h3>
+                    <div class="success-message">
+                        <strong>Remaining CSS rules after removing matched ones:</strong>
+                        <pre style="max-height: 300px; overflow-y: auto;">${escapeHtml(results.remainingBCode.substring(0, 2000))}${results.remainingBCode.length > 2000 ? '\n\n... (truncated, download full file)' : ''}</pre>
+                    </div>
+                `;
+                
+                const remainingBlob = new Blob([results.remainingBCode], { type: 'text/css' });
+                const remainingUrl = URL.createObjectURL(remainingBlob);
+                html += `<a href="${remainingUrl}" download="${remainingFilename}" class="download-btn">📄 Download Remaining B CODE</a>`;
+            } else {
+                html += `
+                    <h3>📄 Remaining B CODE</h3>
+                    <div class="success-message">
+                        <strong>✅ All CSS rules were matched and extracted! No remaining rules.</strong>
+                    </div>
+                `;
+            }
+            
+            resultsDiv.innerHTML = html;
+        }
+        
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        // Clean up blob URLs when page unloads
+        window.addEventListener('beforeunload', function() {
+            const downloadLinks = document.querySelectorAll('a[href^="blob:"]');
+            downloadLinks.forEach(link => {
+                URL.revokeObjectURL(link.href);
+            });
+        });
+    </script>
+</body>
+</html>
+
